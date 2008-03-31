@@ -1,10 +1,6 @@
 package Unix::PID::Tiny;
 
-use warnings;
-use strict;
-
-use vars qw($VERSION);
-$VERSION = 0.1;
+$VERSION = 0.2;
 
 sub new { 
     my ($self, $args_hr) = @_;
@@ -60,7 +56,7 @@ Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprin
 
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.1
+This document describes Unix::PID::Tiny version 0.2
 
 =head1 SYNOPSIS
 

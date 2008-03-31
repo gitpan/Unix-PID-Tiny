@@ -1,5 +1,8 @@
 Revision history for Unix-PID-Tiny
 
+0.2  Mon Mar 31 10:45:54 2008
+       removed vars, strict, and warnings to lower memory even more
+       
 0.1  Mon Mar 31 07:44:07 2008
        Initial release.
 
