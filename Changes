@@ -1,5 +1,10 @@
 Revision history for Unix-PID-Tiny
 
+0.3  Tue Apr  1 09:12:33 2008
+     rt 34586: remove Build.PL
+     rt 34586: remove use warnings from Makefile.PL
+     rt 34586: go ahead an re-add use strict
+     
 0.2  Mon Mar 31 10:45:54 2008
        removed vars, strict, and warnings to lower memory even more
        
