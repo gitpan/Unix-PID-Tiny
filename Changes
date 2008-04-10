@@ -1,5 +1,8 @@
 Revision history for Unix-PID-Tiny
 
+0.4  Thu Apr 10 18:09:35 2008
+     make kill() more portable
+
 0.3  Tue Apr  1 09:12:33 2008
      rt 34586: remove Build.PL
      rt 34586: remove use warnings from Makefile.PL

@@ -2,7 +2,7 @@ package Unix::PID::Tiny;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = 0.3;
+$VERSION = 0.4;
 
 sub new { 
     my ($self, $args_hr) = @_;
@@ -14,9 +14,13 @@ sub kill {
     $pid = int $pid;
     # kill 0, $pid : may be false but still running, see `perldoc -f kill`
     if( $self->is_pid_running($pid) ) {
-        if(!kill 1, $pid) {
-            kill 9, $pid or return;
-        }
+        # RC from kill is not a boolean of if the PID was killed or not, only that it was signaled
+        # so it is not an indicator of "success" in kiling $pid
+        kill(15, $pid); # TERM
+        kill(2, $pid);  # INT
+        kill(1, $pid);  # HUP
+        kill(9, $pid);  # KILL
+        return $self->is_pid_running($pid);
     }   
     return 1; 
 }
@@ -58,7 +62,7 @@ Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprin
 
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.3
+This document describes Unix::PID::Tiny version 0.4
 
 =head1 SYNOPSIS
 
