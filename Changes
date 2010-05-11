@@ -1,5 +1,12 @@
 Revision history for Unix-PID-Tiny
 
+0.6  Tue May 11 07:45:50 2010
+     Add minimum_pid support
+     move ps_path checking to new()
+     have is_pid_running use kill 0 instead of ps when we are root
+     Removed Build.PL items from README
+     Qualify kill() calls to CORE::kill() when appropriate
+     
 0.5  Fri Apr 11 10:59:55 2008
      fixed 0.4 reverse logic on kill() return
      

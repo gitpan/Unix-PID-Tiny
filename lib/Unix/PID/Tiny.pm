@@ -1,57 +1,79 @@
 package Unix::PID::Tiny;
 
-use strict;
-use vars qw($VERSION);
-$VERSION = 0.5;
+$Unix::PID::Tiny::VERSION = 0.6;
 
-sub new { 
-    my ($self, $args_hr) = @_;
-    return bless { 'ps_path' => $args_hr->{'ps_path'} || '', }, $self; 
+sub new {
+    my ( $self, $args_hr ) = @_;
+    $args_hr->{'minimum_pid'} = 11 if !exists $args_hr->{'minimum_pid'} || $args_hr->{'minimum_pid'} !~ m{\A\d+\z}ms;    # this does what one assumes m{^\d+$} would do
+
+    if ( defined $args_hr->{'ps_path'} ) {
+        $args_hr->{'ps_path'} .= '/' if $args_hr->{'ps_path'} !~ m{/$};
+        if ( !-d $args_hr->{'ps_path'} || !-x "$args_hr->{'ps_path'}ps" ) {
+            $args_hr->{'ps_path'} = '';
+        }
+    }
+    else {
+        $args_hr->{'ps_path'} = '';
+    }
+
+    return bless { 'ps_path' => $args_hr->{'ps_path'} }, $self;
 }
 
 sub kill {
-    my($self, $pid) = @_;
+    my ( $self, $pid ) = @_;
     $pid = int $pid;
-    # kill 0, $pid : may be false but still running, see `perldoc -f kill`
-    if( $self->is_pid_running($pid) ) {
-        # RC from kill is not a boolean of if the PID was killed or not, only that it was signaled
+    my $min = int $self->{'minimum_pid'};
+    if ( $pid < $min ) {
+
+        # prevent bad args from killing the process group (IE '0')
+        # or general low level ones
+        warn "kill() called with integer value less than $min";
+        return;
+    }
+
+    # CORE::kill 0, $pid : may be false but still running, see `perldoc -f kill`
+    if ( $self->is_pid_running($pid) ) {
+
+        # RC from CORE::kill is not a boolean of if the PID was killed or not, only that it was signaled
         # so it is not an indicator of "success" in killing $pid
-        kill(15, $pid); # TERM
-        kill(2, $pid);  # INT
-        kill(1, $pid);  # HUP
-        kill(9, $pid);  # KILL
+        CORE::kill( 15, $pid );    # TERM
+        CORE::kill( 2,  $pid );    # INT
+        CORE::kill( 1,  $pid );    # HUP
+        CORE::kill( 9,  $pid );    # KILL
         return if $self->is_pid_running($pid);
-    }   
-    return 1; 
+    }
+    return 1;
 }
 
 sub is_pid_running {
-    my($self, $check_pid) = @_;
-    my @outp = $self->_raw_ps('u', '-p', $check_pid);
+    my ( $self, $check_pid ) = @_;
+    
+    return 1 if $> == 0 && CORE::kill(0, $check_pid); # if we are superuser we can avoid the the system call. For details see `perldoc -f kill`
+    
+    # even if we are superuser, go ahead and call ps just in case CORE::kill 0's false RC was erroneous
+    my @outp = $self->_raw_ps( 'u', '-p', $check_pid );
     chomp @outp;
     return 1 if defined $outp[1];
     return;
 }
 
 sub pid_info_hash {
-    my ($self, $pid) = @_;
-    my @outp = $self->_raw_ps('u', '-p', $pid);
+    my ( $self, $pid ) = @_;
+    my @outp = $self->_raw_ps( 'u', '-p', $pid );
     chomp @outp;
     my %info;
-    @info{ split(/\s+/, $outp[0], 11) } = split(/\s+/, $outp[1], 11);
+    @info{ split( /\s+/, $outp[0], 11 ) } = split( /\s+/, $outp[1], 11 );
     return wantarray ? %info : \%info;
 }
 
 sub _raw_ps {
-    my ($self, @ps_args) = @_;
-    my $psargs = join(' ',@ps_args);
-    $self->{'ps_path'} =~ s{/$}{}g;
-    $self->{'ps_path'} = -d $self->{'ps_path'} && -x "$self->{'ps_path'}/ps" ? "$self->{'ps_path'}/" : '';
+    my ( $self, @ps_args ) = @_;
+    my $psargs = join( ' ', @ps_args );
     my @res = `$self->{'ps_path'}ps $psargs`;
     return wantarray ? @res : join '', @res;
 }
 
-1; 
+1;
 
 __END__
 
@@ -59,10 +81,9 @@ __END__
 
 Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprint
 
-
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.5
+This document describes Unix::PID::Tiny version 0.6
 
 =head1 SYNOPSIS
 
@@ -77,8 +98,7 @@ This document describes Unix::PID::Tiny version 0.5
 
 =head1 DESCRIPTION
 
-Like Unix::PID but using a simple hash based object instead of
-Class::Std and supplying only a few key functions.
+Like Unix::PID but supplies only a few key functions.
 
 =head1 INTERFACE 
 

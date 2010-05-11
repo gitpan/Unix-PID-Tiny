@@ -1,4 +1,4 @@
-Unix-PID-Tiny version 0.5
+Unix-PID-Tiny version 0.6
 
 DOCUMENTATION
 
@@ -13,17 +13,9 @@ To install this module, run the following commands:
 	make test
 	make install
 
-Alternatively, to install with Module::Build, you can use the following commands:
-
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
-
 DEPENDENCIES
 
-See DEPENDENCIES section in POD, 'requires' key in Build.PL, 
-or 'PREREQ_PM' key in Makefile.PL
+See DEPENDENCIES section in POD or 'PREREQ_PM' key in Makefile.PL
 
 COPYRIGHT AND LICENCE
 
