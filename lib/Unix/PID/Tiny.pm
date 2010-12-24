@@ -1,6 +1,6 @@
 package Unix::PID::Tiny;
 
-$Unix::PID::Tiny::VERSION = 0.6;
+$Unix::PID::Tiny::VERSION = 0.7;
 
 sub new {
     my ( $self, $args_hr ) = @_;
@@ -83,16 +83,16 @@ Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprin
 
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.6
+This document describes Unix::PID::Tiny version 0.7
 
 =head1 SYNOPSIS
 
     use Unix::PID::Tiny;
     my $pid = Unix::PID::Tiny->new();
     
-    print Dumper $pid->pid_info_hash( $misc_pid );
+    print Dumper( $pid->pid_info_hash( $misc_pid ) );
     
-    if ($pid->is_running($misc_pid)) {
+    if ($pid->is_pid_running($misc_pid)) {
         $pid->kill( $misc_pid ) or die "Could not stop $misc_pid";
     }
 
