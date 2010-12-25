@@ -1,6 +1,6 @@
 package Unix::PID::Tiny;
 
-$Unix::PID::Tiny::VERSION = 0.7;
+$Unix::PID::Tiny::VERSION = 0.8;
 
 sub new {
     my ( $self, $args_hr ) = @_;
@@ -50,6 +50,9 @@ sub is_pid_running {
     
     return 1 if $> == 0 && CORE::kill(0, $check_pid); # if we are superuser we can avoid the the system call. For details see `perldoc -f kill`
     
+    # If the proc filesystem is available, it's a good test. If not, continue on to system call
+    return 1 if -e "/proc/$$" && -r "/proc/$$" && -r "/proc/$check_pid";
+    
     # even if we are superuser, go ahead and call ps just in case CORE::kill 0's false RC was erroneous
     my @outp = $self->_raw_ps( 'u', '-p', $check_pid );
     chomp @outp;
@@ -83,7 +86,7 @@ Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprin
 
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.7
+This document describes Unix::PID::Tiny version 0.8
 
 =head1 SYNOPSIS
 
