@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Unix-PID-Tiny
-version:             0.8
+version:             0.9
 abstract:            Subset of Unix::PID functionality with smaller memory footprint
 license:             ~
 author:              

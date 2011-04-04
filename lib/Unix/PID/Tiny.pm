@@ -1,6 +1,6 @@
 package Unix::PID::Tiny;
 
-$Unix::PID::Tiny::VERSION = 0.8;
+$Unix::PID::Tiny::VERSION = 0.9;
 
 sub new {
     my ( $self, $args_hr ) = @_;
@@ -20,7 +20,8 @@ sub new {
 }
 
 sub kill {
-    my ( $self, $pid ) = @_;
+    my ( $self, $pid, $give_kill_a_chance) = @_;
+    $give_kill_a_chance = int $give_kill_a_chance;
     $pid = int $pid;
     my $min = int $self->{'minimum_pid'};
     if ( $pid < $min ) {
@@ -40,6 +41,11 @@ sub kill {
         CORE::kill( 2,  $pid );    # INT
         CORE::kill( 1,  $pid );    # HUP
         CORE::kill( 9,  $pid );    # KILL
+        
+        # give kill() some time to take effect?
+        if ($give_kill_a_chance) {
+            sleep($give_kill_a_chance);
+        }
         return if $self->is_pid_running($pid);
     }
     return 1;
@@ -86,7 +92,7 @@ Unix::PID::Tiny - Subset of Unix::PID functionality with smaller memory footprin
 
 =head1 VERSION
 
-This document describes Unix::PID::Tiny version 0.8
+This document describes Unix::PID::Tiny version 0.9
 
 =head1 SYNOPSIS
 

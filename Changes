@@ -1,5 +1,8 @@
 Revision history for Unix-PID-Tiny
 
+0.9  Mon Apr  4 16:01:10  2011
+    - option to wait  between kill and re-check
+    
 0.8  Fri Dec 24 18:41:32 2010
      - Apply Unix::PID v0.22 rt 57634: is_pid_running() use /proc if available , thanks GWADEJ!
 
